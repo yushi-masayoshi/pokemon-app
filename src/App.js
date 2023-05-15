@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import { getAllPokemon, getPokemon } from './utils/Pokemon';
-import { Card } from './components/card/Card';
 import Navbar from './components/navbar/Navbar';
+import PokemonList from './components/PokemonList';
+import HandlePage from './components/btn/HandlePage';
+import { Card } from './components/card/Card';
 
 function App() {
   const initialURL = "https://pokeapi.co/api/v2/pokemon";
@@ -61,8 +63,6 @@ function App() {
     }
   };
 
-  console.log(pokeSearch);
-
   return (
     <>
       <Navbar />
@@ -71,21 +71,18 @@ function App() {
         {loading ? (
           <h1>ロード中・・・</h1>
         ) : <>
-          <div className='pokemonCardContainer'>
-            {pokemonData.filter((poke) => {
-              const isMatchPoke = poke.name.indexOf(pokeSearch) !== -1;
-              return isMatchPoke;
-            })
-            .map((pokemon, i) => {
-              return <Card key={i} pokemon={pokemon} />
-            })}
-          </div>
-          <div className='btn'>
-            {error ? <p>最初のページだよ〜</p> : <></>}
-            
-            <button onClick={handlePrevPage}>前へ</button>
-            <button onClick={handleNextPage}>次へ</button>
-          </div>
+              <div className='pokemonCardContainer'>
+                {pokemonData
+                .filter((poke) => {
+                    const isMatchPoke = poke.name.indexOf(pokeSearch) !== -1;
+                    return isMatchPoke;
+                  })
+                .map((pokemon) => {
+                  return <Card key={pokemon.name} pokemon={pokemon} />
+                })}
+            </div>
+            <HandlePage error={error} NextPage={handleNextPage} PrevPage={handlePrevPage}/>
+          
         </>}
       </div>
     </>
