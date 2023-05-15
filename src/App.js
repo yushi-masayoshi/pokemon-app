@@ -10,6 +10,8 @@ function App() {
   const [pokemonData, setPokemonData] = useState([]);
   const [nextURL, setNextURL] = useState("");
   const [prevURL, setPrevURL] = useState("");
+  const [error, setError] = useState(false);
+  const [pokeSearch , setPokeSearch] = useState("");
 
   useEffect(() => {
     const fetchPoemonDate = async () =>{
@@ -37,6 +39,7 @@ function App() {
   
 
   const handleNextPage = async () => {
+    setError(false);
     setLoading(true);
     let data = await getAllPokemon(nextURL);
     await loadPokemon(data.results);
@@ -46,28 +49,40 @@ function App() {
   };
 
   const handlePrevPage = async () => {
-    if(!prevURL) return;
-    setLoading(true);
-    let prevData = await getAllPokemon(prevURL);
-    await loadPokemon(prevData.results);
-    setPrevURL(prevData.previous)
-    setLoading(false);
+    if(!prevURL){
+      setError(true);
+    } else {
+      setError(false);
+      setLoading(true);
+      let prevData = await getAllPokemon(prevURL);
+      await loadPokemon(prevData.results);
+      setPrevURL(prevData.previous)
+      setLoading(false);
+    }
   };
 
- 
+  console.log(pokeSearch);
+
   return (
     <>
       <Navbar />
       <div className="App">
+        <input type='text' value={pokeSearch} onChange={(e) => setPokeSearch(e.target.value)} />
         {loading ? (
           <h1>ロード中・・・</h1>
         ) : <>
           <div className='pokemonCardContainer'>
-            {pokemonData.map((pokemon, i) => {
+            {pokemonData.filter((poke) => {
+              const isMatchPoke = poke.name.indexOf(pokeSearch) !== -1;
+              return isMatchPoke;
+            })
+            .map((pokemon, i) => {
               return <Card key={i} pokemon={pokemon} />
             })}
           </div>
           <div className='btn'>
+            {error ? <p>最初のページだよ〜</p> : <></>}
+            
             <button onClick={handlePrevPage}>前へ</button>
             <button onClick={handleNextPage}>次へ</button>
           </div>

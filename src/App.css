@@ -34,3 +34,7 @@
   transform: translateY(5px);
   box-shadow: none;
 }
+
+.is-active {
+  display: block;
+}
